@@ -1,8 +1,9 @@
 import json
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from django.http import JsonResponse
+from django.contrib import auth
 from django.contrib.auth.models import User
 from django.contrib import messages
 from email_validator import validate_email, EmailNotValidError
@@ -58,7 +59,7 @@ class RegisterView(View):
         if form_obj.is_valid():
             user = User.objects.create_user(username, email, password)
             messages.success(request, '账号注册成功')
-            return render(request, 'authentication/register.html')
+            return redirect('login')
         
         # error, form_obj.errors is a dict
         for error in form_obj.errors.values():
@@ -67,4 +68,35 @@ class RegisterView(View):
 
         
 
+class LoginView(View):
+    def get(self, request):
+        return render(request, 'authentication/login.html')
+    
+    def post(self, request):
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '').strip()
+        if not username or not password:
+            messages.error(request, '用户名或密码缺失')
+            return render(request, 'authentication/login.html')
+        
+        user = auth.authenticate(
+            request,
+            username=username,
+            password=password,
+        )
+        if not user:
+            messages.error(request, '用户名或密码错误')
+            return render(request, 'authentication/login.html')
+        
+        auth.login(request, user)
+        messages.success(request, '登录成功')
+        return redirect('expenses')
 
+
+
+class LougutView(View):
+
+    def get(self, request):
+        auth.logout(request)
+        messages.success(request, '退出成功')
+        return redirect('login')

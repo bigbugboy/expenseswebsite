@@ -26,16 +26,15 @@
         <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
         <ul class="navbar-nav px-3">
             <li class="nav-item text-nowrap">
-                <a class="nav-link" href="#">Sign out</a>
+                <a class="nav-link" href="{% url 'logut' %}">退出</a>
             </li>
         </ul>
     </nav>
 
     <div class="container-fluid">
         <div class="row">
-           {% include 'partials/_sidebar.html' %}
-
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+               {% include 'partials/_messages.html' %}
                {% block content %}
                {% endblock %}
             </main>
