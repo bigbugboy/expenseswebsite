@@ -131,6 +131,67 @@ def this_month_data_stats(request):
     return JsonResponse(response_data)
 
 
+"""
+[
+        ['product', '2012', '2013', '2014', '2015', '2016', '2017'],
+        ['Milk Tea', 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
+        ['Matcha Latte', 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
+        ['Cheese Cocoa', 40.1, 62.2, 69.5, 36.4, 45.2, 32.5],
+        ['Walnut Brownie', 25.2, 37.1, 41.2, 18, 33.9, 49.1]
+      ]
+"""
 
+@login_required(login_url='login')
+def year_category_stats(request, year):
+    start_day = datetime.date(year=year, month=1, day=1)
+    end_day = datetime.date(year=year, month=12, day=31)
+
+    expenses = Expense.objects.filter(owner=request.user, date__range=(start_day, end_day)).all()
+    categories = Category.objects.all()
+    stats = {c.name: [0 for _ in range(12)] for c in categories}
+    for item in expenses:
+        category = item.category
+        month = item.date.month
+        stats[category][month - 1] += item.amount
+    
+    response_data = [[k] + v for k, v in stats.items()]
+    response_data.insert(0, ['product'] + [str(i + 1) for i in range(12)])
+
+    return JsonResponse({
+        'response_data': response_data
+    })
+
+
+
+@login_required(login_url='login')
 def expense_summary_index(request):
-    return render(request, 'expenses/summary_index.html')
+    today = datetime.date.today() 
+    start_date = today.replace(year=today.year - 1, month=1, day=1)
+    
+    today_sum_stats = {'title': '今天', 'count': 0, 'sum': 0}
+    this_month_sum_stats = {'title': '本月', 'count': 0, 'sum': 0}
+    this_year_sum_stats = {'title': '今年', 'count': 0, 'sum': 0}
+    last_yesr_sum_stats = {'title': '去年', 'count': 0, 'sum': 0}
+    expenses = Expense.objects.filter(owner=request.user, date__gte=start_date).all()
+    for item in expenses:
+        if item.date == today:
+            today_sum_stats['count'] += 1
+            today_sum_stats['sum'] += item.amount
+        if item.date >= today.replace(day=1):
+            this_month_sum_stats['count'] += 1
+            this_month_sum_stats['sum'] += item.amount
+        if item.date >= today.replace(month=1, day=1):
+            this_year_sum_stats['count'] += 1
+            this_year_sum_stats['sum'] += item.amount
+        else:
+            last_yesr_sum_stats['count'] += 1
+            last_yesr_sum_stats['sum'] += item.amount
+
+
+    context = {
+        'sum_stats_list': [
+            today_sum_stats, this_month_sum_stats, this_year_sum_stats,last_yesr_sum_stats
+        ],
+    }
+
+    return render(request, 'expenses/summary_index.html', context)

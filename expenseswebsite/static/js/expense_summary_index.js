@@ -1,0 +1,187 @@
+
+function thisYearStats(data) {
+    // 基于准备好的dom，初始化echarts实例
+    var chartDom = document.getElementById('thisYearStats');
+    var myChart = echarts.init(chartDom);
+    var option;
+    setTimeout(function () {
+        option = {
+            legend: {},
+            tooltip: {
+                trigger: 'axis',
+                showContent: false
+            },
+            dataset: {
+                source: data
+            },
+            xAxis: { type: 'category' },
+            yAxis: { gridIndex: 0 },
+            grid: { top: '55%' },
+            series: [
+                {
+                    type: 'line',
+                    smooth: true,
+                    seriesLayoutBy: 'row',
+                    emphasis: { focus: 'series' }
+                },
+                {
+                    type: 'line',
+                    smooth: true,
+                    seriesLayoutBy: 'row',
+                    emphasis: { focus: 'series' }
+                },
+                {
+                    type: 'line',
+                    smooth: true,
+                    seriesLayoutBy: 'row',
+                    emphasis: { focus: 'series' }
+                },
+                {
+                    type: 'line',
+                    smooth: true,
+                    seriesLayoutBy: 'row',
+                    emphasis: { focus: 'series' }
+                },
+                {
+                    type: 'pie',
+                    id: 'pie',
+                    radius: '30%',
+                    center: ['50%', '25%'],
+                    emphasis: {
+                        focus: 'self'
+                    },
+                    label: {
+                        formatter: '{b}: {@2012} ({d}%)'
+                    },
+                    encode: {
+                        itemName: 'product',
+                        value: '2012',
+                        tooltip: '2012'
+                    }
+                }
+            ]
+        };
+        myChart.on('updateAxisPointer', function (event) {
+            const xAxisInfo = event.axesInfo[0];
+            if (xAxisInfo) {
+                const dimension = xAxisInfo.value + 1;
+                myChart.setOption({
+                    series: {
+                        id: 'pie',
+                        label: {
+                            formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+                        },
+                        encode: {
+                            value: dimension,
+                            tooltip: dimension
+                        }
+                    }
+                });
+            }
+        });
+        myChart.setOption(option);
+    });
+
+    chartDom.setOption(option);
+}
+
+
+function lastYearStats(data) {
+    // 基于准备好的dom，初始化echarts实例
+    var chartDom = document.getElementById('lastYearStats');
+    var myChart = echarts.init(chartDom);
+    var option;
+    setTimeout(function () {
+        option = {
+            legend: {},
+            tooltip: {
+                trigger: 'axis',
+                showContent: false
+            },
+            dataset: {
+                source: data
+            },
+            xAxis: { type: 'category' },
+            yAxis: { gridIndex: 0 },
+            grid: { top: '55%' },
+            series: [
+                {
+                    type: 'line',
+                    smooth: true,
+                    seriesLayoutBy: 'row',
+                    emphasis: { focus: 'series' }
+                },
+                {
+                    type: 'line',
+                    smooth: true,
+                    seriesLayoutBy: 'row',
+                    emphasis: { focus: 'series' }
+                },
+                {
+                    type: 'line',
+                    smooth: true,
+                    seriesLayoutBy: 'row',
+                    emphasis: { focus: 'series' }
+                },
+                {
+                    type: 'line',
+                    smooth: true,
+                    seriesLayoutBy: 'row',
+                    emphasis: { focus: 'series' }
+                },
+                {
+                    type: 'pie',
+                    id: 'pie',
+                    radius: '30%',
+                    center: ['50%', '25%'],
+                    emphasis: {
+                        focus: 'self'
+                    },
+                    label: {
+                        formatter: '{b}: {@2012} ({d}%)'
+                    },
+                    encode: {
+                        itemName: 'product',
+                        value: '2012',
+                        tooltip: '2012'
+                    }
+                }
+            ]
+        };
+        myChart.on('updateAxisPointer', function (event) {
+            const xAxisInfo = event.axesInfo[0];
+            if (xAxisInfo) {
+                const dimension = xAxisInfo.value + 1;
+                myChart.setOption({
+                    series: {
+                        id: 'pie',
+                        label: {
+                            formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+                        },
+                        encode: {
+                            value: dimension,
+                            tooltip: dimension
+                        }
+                    }
+                });
+            }
+        });
+        myChart.setOption(option);
+    });
+
+    chartDom.setOption(option);
+}
+
+
+function getStatsDate() {
+    fetch('/year_category_stats/2023').then((res) => res.json()).then((data) => {
+        thisYearStats(data.response_data)
+    })
+    fetch('/year_category_stats/2022').then((res) => res.json()).then((data) => {
+        lastYearStats(data.response_data)
+
+    })
+}
+
+
+document.onload = getStatsDate()

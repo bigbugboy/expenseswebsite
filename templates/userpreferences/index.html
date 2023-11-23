@@ -3,7 +3,17 @@
 {% block content %}
 
 <div class="container mt-3">
-    <h5 class="pb-3">Preferred Currency</h5>
+    <div class="row">
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="">Settings</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">General</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <h5 class="py-3">您的货币</h5>
     {% include 'partials/_messages.html' %}
     <form action="{% url 'preferences'%}" method="post">
         {% csrf_token %}
