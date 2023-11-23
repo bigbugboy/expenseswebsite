@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.db.models import Q
 
 from .models import Category, Expense
 
@@ -9,10 +10,22 @@ from .models import Category, Expense
 @login_required(login_url='login')
 def index(request):
     page = request.GET.get('page', 1)
-    expenses = Expense.objects.all()
-    paginator = Paginator(expenses, 5)
+    search = request.GET.get('search', '').strip()
+    if not search:
+        expenses = Expense.objects.all()
+    else:
+        expenses = Expense.objects.filter(
+            Q(owner=request.user),
+            Q(amount__startswith=search)|
+            Q(date__startswith=search)|
+            Q(description__icontains=search)|
+            Q(category__icontains=search)
+        )
+
+    paginator = Paginator(expenses, 2)
     context = {
-        'page_obj': paginator.get_page(page)
+        'page_obj': paginator.get_page(page),
+        'search_text': search
     }
     
     return render(request, 'expenses/index.html', context)
