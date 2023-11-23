@@ -5,6 +5,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
 import datetime
+import calendar
 from collections import defaultdict
 
 
@@ -108,10 +109,17 @@ def delete_expense(request, id):
     return redirect(to='expenses')
 
 
+
 @login_required(login_url='login')
 def this_month_data_stats(request):
     start_date = datetime.date.today().replace(day=1)
-    expenses = Expense.objects.filter(owner=request.user, date__gte=start_date).all()
+    end_date = start_date.replace(
+        day=calendar.monthrange(start_date.year, start_date.month)[1]
+    )
+    expenses = Expense.objects.filter(
+        owner=request.user, 
+        date__range=(start_date, end_date)
+    ).all()
 
     # amount per category
     # amount per day

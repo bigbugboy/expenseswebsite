@@ -82,7 +82,7 @@ function thisYearStats(data) {
         myChart.setOption(option);
     });
 
-    chartDom.setOption(option);
+    
 }
 
 
@@ -169,7 +169,7 @@ function lastYearStats(data) {
         myChart.setOption(option);
     });
 
-    chartDom.setOption(option);
+    
 }
 
 
