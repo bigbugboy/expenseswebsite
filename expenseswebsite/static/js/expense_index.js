@@ -104,7 +104,7 @@ function dayStats(day_data) {
 
 
 function getStatsDate() {
-    fetch('/this_month_data_stats').then((res) => res.json()).then((data) => {
+    fetch('/expenses/this_month_data_stats').then((res) => res.json()).then((data) => {
         console.log(data.category_stats)
         console.log(data.day_stats)
         categoryStats(data.category_stats)

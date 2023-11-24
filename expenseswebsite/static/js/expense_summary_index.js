@@ -174,10 +174,13 @@ function lastYearStats(data) {
 
 
 function getStatsDate() {
-    fetch('/year_category_stats/2023').then((res) => res.json()).then((data) => {
+    const currentDate = new Date();
+    const thisYear = currentDate.getFullYear()
+    const lastYear = thisYear - 1
+    fetch('/expenses/year_category_stats/' + thisYear).then((res) => res.json()).then((data) => {
         thisYearStats(data.response_data)
     })
-    fetch('/year_category_stats/2022').then((res) => res.json()).then((data) => {
+    fetch('/expenses/year_category_stats/' + lastYear).then((res) => res.json()).then((data) => {
         lastYearStats(data.response_data)
 
     })
